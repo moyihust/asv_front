@@ -68,7 +68,7 @@ export default {
         await new Promise((resolve) => setTimeout(resolve, 2000));
 
         // 登录成功，跳转到其他页面
-        this.$router.push({ name: "feature-page-1" });
+        this.$router.push({ name: "record" });
       } catch (error) {
         // 处理登录错误
         console.error("登录失败:", error);

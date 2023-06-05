@@ -78,7 +78,7 @@ export default {
         await new Promise((resolve) => setTimeout(resolve, 2000));
 
         // 注册成功，跳转到其他页面
-        this.$router.push({ name: "feature-page-1" });
+        this.$router.push({ name: "record" });
       } catch (error) {
         // 处理注册错误
         console.error("注册失败:", error);
