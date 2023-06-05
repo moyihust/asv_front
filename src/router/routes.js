@@ -37,6 +37,28 @@ const routes = [
       },
     ],
   },
+  {
+    path: "/upload",
+    component: () => import("layouts/SiderbarLayout.vue"),
+    children: [
+      {
+        path: "",
+        name: "upload",
+        component: () => import("pages/UploadPage.vue"),
+      },
+    ],
+  },
+  {
+    path: "/history",
+    component: () => import("layouts/SiderbarLayout.vue"),
+    children: [
+      {
+        path: "",
+        name: "history",
+        component: () => import("pages/HistoryPage.vue"),
+      },
+    ],
+  },
   // Always leave this as last one,
   // but you can also remove it
   {

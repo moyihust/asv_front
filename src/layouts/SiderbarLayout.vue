@@ -22,7 +22,21 @@
           tag="a"
           v-bind:href="$router.resolve({ name: 'record' }).href"
         >
-          <q-item-section>录音并上传</q-item-section>
+          <q-item-section>录音并检测</q-item-section>
+        </q-item>
+        <q-item
+          clickable
+          tag="a"
+          v-bind:href="$router.resolve({ name: 'upload' }).href"
+        >
+          <q-item-section>上传并检测</q-item-section>
+        </q-item>
+        <q-item
+          clickable
+          tag="a"
+          v-bind:href="$router.resolve({ name: 'history' }).href"
+        >
+          <q-item-section>历史记录</q-item-section>
         </q-item>
       </q-list>
     </q-drawer>
