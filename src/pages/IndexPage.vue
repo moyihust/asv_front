@@ -39,6 +39,10 @@
               label="注册"
               @click="gotoRegisterPage"
             />
+            <!-- 用于显示错误消息的元素 -->
+            <div v-if="errorMessage" class="error-message">
+              {{ errorMessage }}
+            </div>
           </div>
         </q-form>
       </q-card-section>
@@ -47,34 +51,49 @@
 </template>
 
 <script>
+import axios from "axios";
 export default {
   name: "IndexPage",
   data() {
     return {
       username: "",
       password: "",
+      errorMessage: "", // 存储错误消息
       loading: false,
     };
   },
   methods: {
     async submitForm() {
-      if (!this.$refs.loginForm.validate()) {
-        return;
-      }
-
-      this.loading = true;
       try {
-        // 动态模拟登录延迟
-        await new Promise((resolve) => setTimeout(resolve, 2000));
+        const response = await axios.post("http://127.0.0.1:8081/api/login", {
+          userID: this.username,
+          password: this.password,
+        });
 
-        // 登录成功，跳转到其他页面
-        this.$router.push({ name: "record" });
+        console.log(response.data);
+
+        if (response.data && response.data.token) {
+          this.setCookie("token", response.data.token, 7); // 设置 cookie 有效期为 7 天
+          this.$router.push({ name: "record" });
+        } else {
+          // 设置错误消息
+          this.errorMessage = response.data.message || "登录失败，请重试。";
+        }
       } catch (error) {
-        // 处理登录错误
-        console.error("登录失败:", error);
-      } finally {
-        this.loading = false;
+        console.error(error);
+        // 设置错误消息
+        this.errorMessage =
+          (error.response &&
+            error.response.data &&
+            error.response.data.message) ||
+          "网络错误，请重试。";
       }
+    },
+    setCookie(cname, cvalue, exdays) {
+      const d = new Date();
+      d.setTime(d.getTime() + exdays * 24 * 60 * 60 * 1000);
+      const expires = "expires=" + d.toUTCString();
+      document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
     },
     gotoRegisterPage() {
       this.$router.push({ name: "register" });

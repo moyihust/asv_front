@@ -7,8 +7,18 @@
       @click="onButtonClick"
       size="52px"
       class="q-mb-md"
+      style="margin-top: 20px"
     />
-    <q-input outlined v-model="text" label="返回结果" clearable />
+    <div class="column items-center justify-center" style="width: 100%">
+      <q-input
+        outlined
+        v-model="text"
+        label="返回结果"
+        clearable
+        style="max-width: 300px"
+        readonly
+      />
+    </div>
   </q-page>
 </template>
 
@@ -30,6 +40,6 @@ export default {
 
 <style scoped>
 .q-input {
-  margin-top: 200px;
+  margin-top: -300px;
 }
 </style>

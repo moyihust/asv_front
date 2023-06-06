@@ -18,20 +18,21 @@
 
           <q-input
             outlined
-            v-model="email"
-            label="邮箱"
-            clearable
-            :rules="[(val) => !!val || '邮箱不能为空']"
-            lazy-rules
-          />
-
-          <q-input
-            outlined
             v-model="password"
             label="密码"
             type="password"
             clearable
             :rules="[(val) => !!val || '密码不能为空']"
+            lazy-rules
+          />
+
+          <q-input
+            outlined
+            v-model="confirmPassword"
+            label="重复密码"
+            type="password"
+            clearable
+            :rules="[(val) => !!val || '重复密码不能为空']"
             lazy-rules
           />
 
@@ -48,6 +49,10 @@
               label="登录"
               @click="gotoLoginPage"
             ></q-btn>
+            <!-- 用于显示错误消息的元素 -->
+            <div v-if="errorMessage" class="error-message">
+              {{ errorMessage }}
+            </div>
           </div>
         </q-form>
       </q-card-section>
@@ -56,35 +61,56 @@
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   name: "RegisterPage",
   data() {
     return {
       username: "",
-      email: "",
       password: "",
+      confirmPassword: "",
+      errorMessage: "",
       loading: false,
     };
   },
   methods: {
     async submitForm() {
-      if (!this.$refs.registerForm.validate()) {
-        return;
-      }
-
-      this.loading = true;
       try {
-        // 动态模拟注册延迟
-        await new Promise((resolve) => setTimeout(resolve, 2000));
+        if (this.password !== this.confirmPassword) {
+          this.errorMessage = "密码和确认密码不匹配，请重新输入。";
+          return;
+        }
 
-        // 注册成功，跳转到其他页面
-        this.$router.push({ name: "record" });
+        const response = await axios.post(
+          "http://127.0.0.1:8081/api/register",
+          {
+            userID: this.username,
+            password: this.password,
+            confirmPassword: this.confirmPassword,
+          }
+        );
+
+        if (response.data && response.data.token) {
+          this.setCookie("token", response.data.token, 7);
+          this.$router.push({ name: "record" });
+        } else {
+          this.errorMessage = response.data.message || "注册失败，请重试。";
+        }
       } catch (error) {
-        // 处理注册错误
-        console.error("注册失败:", error);
-      } finally {
-        this.loading = false;
+        console.error(error);
+        this.errorMessage =
+          (error.response &&
+            error.response.data &&
+            error.response.data.message) ||
+          "网络错误，请重试。";
       }
+    },
+    setCookie(cname, cvalue, exdays) {
+      const d = new Date();
+      d.setTime(d.getTime() + exdays * 24 * 60 * 60 * 1000);
+      const expires = "expires=" + d.toUTCString();
+      document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
     },
     gotoLoginPage() {
       this.$router.push({ name: "login" });
