@@ -42,6 +42,7 @@
           clickable
           tag="a"
           v-bind:href="$router.resolve({ name: 'login' }).href"
+          @click="logout"
         >
           <q-item-section>退出登录</q-item-section>
         </q-item>
@@ -63,5 +64,9 @@ export default {
     };
   },
   // ...
+  logout() {
+    // 清空token
+    localStorage.removeItem("token");
+  },
 };
 </script>
