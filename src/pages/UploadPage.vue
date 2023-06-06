@@ -49,7 +49,7 @@ export default {
 
       // 创建 WebSocket 连接并将其保存到 data 中
       this.websocket = new WebSocket(
-        `ws://127.0.0.1:8081/api/connect?token=${this.token}`
+        `ws://10.0.2.2:8081/api/connect?token=${this.token}`
       );
 
       // 当 WebSocket 连接建立时
@@ -96,7 +96,7 @@ export default {
       try {
         // 发送 POST 请求以上传文件
         const response = await axios.post(
-          `http://127.0.0.1:8081/api/upload/`,
+          `http://10.0.2.2:8081/api/upload`,
           formData,
           {
             headers: {
