@@ -1,4 +1,10 @@
 <template>
+  <input
+    type="file"
+    ref="fileInput"
+    @change="onFileSelected"
+    style="display: none"
+  />
   <q-page class="flex flex-center flex-column">
     <q-btn
       round
@@ -23,6 +29,7 @@
 </template>
 
 <script>
+import axios from "axios";
 export default {
   name: "SphericalButtonWithInput",
   data() {
@@ -31,20 +38,24 @@ export default {
       websocket: null,
       queuePosition: "",
       result: "",
+      token: "",
       file: null,
     };
   },
   methods: {
     async onButtonClick() {
+      // 获取 token
+      this.token = this.getCookie("token");
+
       // 创建 WebSocket 连接并将其保存到 data 中
-      this.websocket = new WebSocket("ws://127.0.0.1:8080/api/connect");
+      this.websocket = new WebSocket(
+        `ws://127.0.0.1:8081/api/connect?token=${this.token}`
+      );
 
       // 当 WebSocket 连接建立时
-      this.websocket.onopen = async (event) => {
+      this.websocket.onopen = (event) => {
         console.log("WebSocket 连接已建立");
-
-        // 添加 token 到请求头
-        this.websocket.send(JSON.stringify({ token: "your_token_here" }));
+        this.$refs.fileInput.click();
       };
 
       // 当 WebSocket 接收到消息时
@@ -58,7 +69,11 @@ export default {
           this.result = data.result;
 
           // 上传文件
-          await this.uploadFile(data.id);
+          this.id = data.id;
+        }
+
+        if (data && data.message) {
+          this.text = data.message;
         }
       };
 
@@ -72,20 +87,21 @@ export default {
         console.error("WebSocket 出现错误:", event);
       };
     },
-    async uploadFile(id) {
+    async uploadFile() {
       // 创建一个 FormData 对象以存储要上传的文件
       const formData = new FormData();
       formData.append("file", this.file);
+      formData.append("id", this.id);
 
       try {
         // 发送 POST 请求以上传文件
         const response = await axios.post(
-          `http://127.0.0.1:8080/api/upload/${id}`,
+          `http://127.0.0.1:8081/api/upload/`,
           formData,
           {
             headers: {
               "Content-Type": "multipart/form-data",
-              Authorization: `Bearer ${"your_token_here"}`,
+              token: `${this.token}`,
             },
           }
         );
@@ -95,8 +111,16 @@ export default {
         console.error("文件上传失败:", error);
       }
     },
-    onFileInputChange(event) {
+    onFileSelected(event) {
       this.file = event.target.files[0];
+      this.uploadFile();
+    },
+    getCookie(name) {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) {
+        return parts.pop().split(";").shift();
+      }
     },
   },
 };
