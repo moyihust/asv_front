@@ -38,6 +38,13 @@
         >
           <q-item-section>历史记录</q-item-section>
         </q-item>
+        <q-item
+          clickable
+          tag="a"
+          v-bind:href="$router.resolve({ name: 'login' }).href"
+        >
+          <q-item-section>退出登录</q-item-section>
+        </q-item>
       </q-list>
     </q-drawer>
 
