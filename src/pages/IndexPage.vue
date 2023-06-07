@@ -65,7 +65,7 @@ export default {
   methods: {
     async submitForm() {
       try {
-        const response = await axios.post("http://127.0.0.1:8081/api/login", {
+        const response = await axios.post("/api/login", {
           userID: this.username,
           password: this.password,
         });

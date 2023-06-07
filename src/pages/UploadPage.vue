@@ -48,9 +48,7 @@ export default {
       this.token = this.getCookie("token");
 
       // 创建 WebSocket 连接并将其保存到 data 中
-      this.websocket = new WebSocket(
-        `ws://10.0.2.2:8081/api/connect?token=${this.token}`
-      );
+      this.websocket = new WebSocket(`/ws/connect?token=${this.token}`);
 
       // 当 WebSocket 连接建立时
       this.websocket.onopen = (event) => {
@@ -95,16 +93,12 @@ export default {
 
       try {
         // 发送 POST 请求以上传文件
-        const response = await axios.post(
-          `http://10.0.2.2:8081/api/upload`,
-          formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-              token: `${this.token}`,
-            },
-          }
-        );
+        const response = await axios.post(`/api/upload`, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            token: `${this.token}`,
+          },
+        });
 
         console.log("文件已成功上传:", response);
       } catch (error) {

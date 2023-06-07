@@ -82,14 +82,11 @@ export default {
           return;
         }
 
-        const response = await axios.post(
-          "http://127.0.0.1:8081/api/register",
-          {
-            userID: this.username,
-            password: this.password,
-            confirmPassword: this.confirmPassword,
-          }
-        );
+        const response = await axios.post("/api/register", {
+          userID: this.username,
+          password: this.password,
+          confirmPassword: this.confirmPassword,
+        });
 
         if (response.data && response.data.token) {
           this.setCookie("token", response.data.token, 7);

@@ -44,7 +44,7 @@ export default {
     async getHistory() {
       try {
         this.token = this.getCookie("token");
-        const response = await axios.get("http://127.0.0.1:8081/api/history", {
+        const response = await axios.get("/api/history", {
           headers: {
             token: this.token,
           },
@@ -59,7 +59,7 @@ export default {
       try {
         console.log(this.listItems);
         const response = await axios.delete(
-          `http://127.0.0.1:8081/api/audio?linkID=${this.listItems[index].linkID}`,
+          `/api/audio?linkID=${this.listItems[index].linkID}`,
           {
             headers: {
               token: this.token,
@@ -92,15 +92,12 @@ export default {
       const linkID = this.listItems[index].linkID;
 
       try {
-        const response = await axios.get(
-          `http://127.0.0.1:8081/api/audio?linkID=${linkID}`,
-          {
-            headers: {
-              token: this.token,
-            },
-            responseType: "blob",
-          }
-        );
+        const response = await axios.get(`/api/audio?linkID=${linkID}`, {
+          headers: {
+            token: this.token,
+          },
+          responseType: "blob",
+        });
 
         const blob = new Blob([response.data], { type: "audio/mpeg" });
         const audioUrl = URL.createObjectURL(blob);
